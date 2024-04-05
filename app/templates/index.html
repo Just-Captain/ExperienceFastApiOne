@@ -1,0 +1,110 @@
+{% extends 'base.html'%}  <!-- Наследует базовый шаблон HTML. -->
+{% block body %}  <!-- Начинает блок контента для этой страницы. -->
+
+<button id="getTaskBtn">Получить задачи</button>  <!-- Кнопка для получения задач. -->
+<ol id="listOl">  <!-- Список для отображения задач. -->
+
+</ol>
+
+<form>  <!-- Форма для создания новой задачи. -->
+    <label>Название:</label>
+    <input type="text" id="formTitle">  <!-- Поле ввода для названия задачи. -->
+    <label>Описание:</label>
+    <input type="text" id="formDescription">  <!-- Поле ввода для описания задачи. -->
+    <button id="formBtn">Отправить запрос</button>  <!-- Кнопка для отправки формы. -->
+</form>
+
+<form id="formUpdate" style="display: none;">  <!-- Форма для обновления задач, скрытая по умолчанию. -->
+    <label>Название:</label>
+    <input type="text" id="formTitle">  <!-- Поле ввода для названия задачи. -->
+    <label>Описание:</label>
+    <input type="text" id="formDescription">  <!-- Поле ввода для описания задачи. -->
+    <button id="formBtn">Отправить запрос</button>  <!-- Кнопка для отправки формы. -->
+</form>
+
+
+<script>
+const listTaskGet = 'http://127.0.0.1:8000/api/v1/tasks/list/';  // URL для получения списка задач.
+
+
+function hideFormUpdate(){
+    const formUpdate = document.getElementById('formUpdate');
+                formUpdate.addEventListener('click', function(event){
+                    formUpdate.style.display = 'grid'
+                    console.log('formUpdate')
+                })
+}
+
+function getTask(){  //cФункция для получения задач.
+    fetch(listTaskGet)  // Выполняет GET-запрос для получения задач.
+      .then(response => response.json())  // Преобразует ответ в объект JSON.
+      .then(tasks => {  // Перебирает полученные задачи.
+        let listOl = document.getElementById('listOl');  // Получает элемент списка.
+        listOl.innerHTML = ''  // Очищает список.
+        for (let i = 0; i < tasks.length; i++){  // Перебирает задачи и создает элементы списка для каждой задачи.
+            element_li = document.createElement('li');  // Создает элемент списка.
+            element_title = document.createElement('h2');  // Создает заголовок для названия задачи.
+            element_description = document.createElement('p');  // Создает параграф для описания задачи.
+            element_status = document.createElement('p')  // Создает параграф для статуса задачи.
+            element_button_delete = document.createElement('button');  // Создает кнопку для удаления задачи.
+            element_button_update = document.createElement('button');  // Создает кнопку для обновления задачи.
+            element_button_update.textContent = 'Изменить';  // Устанавливает текст кнопки обновления.
+            element_button_delete.textContent = 'Удалить'  // Устанавливает текст кнопки удаления.
+            element_button_update.style.background = 'yellow'  // Устанавливает цвет фона для кнопки обновления.
+            element_button_delete.style.background = 'red'  // Устанавливает цвет фона для кнопки удаления.
+            element_button_delete.id = `d_task_id=${tasks[i].id}`  // Устанавливает уникальный идентификатор для кнопки удаления.
+            element_button_update.id = `u_task_id=${tasks[i].id}`  // Устанавливает уникальный идентификатор для кнопки обновления.
+            element_button_delete.addEventListener('click',function(event){ // Добавляет обработчик события для кнопки удаления.
+                event.preventDefault();  // Предотвращает выполнение действия по умолчанию.
+                url = 'http://127.0.0.1:8000/api/v1/tasks/delete/' + '?'+ this.id.slice(2, this.id.length)  // Формирует URL для удаления задачи.
+                fetch(url, {  // Выполняет DELETE-запрос для удаления задачи.
+                    method: 'DELETE',
+                    headers: {'Content-Type': 'application/json'},
+    })
+            })
+            element_button_update.addEventListener('click', function(event){  // Добавляет обработчик события для кнопки обновления.
+                event.preventDefault();  // Предотвращает выполнение действия по умолчанию.
+                url = 'http://127.0.0.1:8000/api/v1/tasks/update/' + '?' + this.id.slice(2, this.id.length);  // Формирует URL для обновления задачи. //
+
+
+            })
+
+
+            element_title.textContent = tasks[i].title;  // Устанавливает название задачи.
+            element_description.textContent = tasks[i].description;  // Устанавливает описание задачи.
+            element_status.textContent = tasks[i].status;  // Устанавливает статус задачи.
+            element_div = document.createElement('div');  // Создает элемент div для размещения заголовка, описания, статуса, кнопок удаления и обновления.
+            element_div.append(element_title,element_description,element_status,element_button_delete, element_button_update)  // Добавляет элементы в div.
+            element_li.append(element_div);  // Добавляет div в элемент списка.
+            listOl.append(element_li);  // Добавляет элемент списка в список.
+        }
+      })
+
+}
+
+// Что бы получить задачи
+let getTaskBtn = document.getElementById('getTaskBtn');  // Получает кнопку для получения задач.
+getTaskBtn.addEventListener('click', function(event){  // Добавляет обработчик события для кнопки получения задач.
+    getTask()  // Вызывает функцию для получения задач.
+})
+
+//Что бы отправить POST запрос, что бы создать новую задачу
+let formBtn = document.getElementById('formBtn');  // Получает кнопку для отправки формы создания задачи.
+formBtn.addEventListener('click', function(event){  //Д обавляет обработчик события для кнопки отправки формы.
+    event.preventDefault()  // Предотвращает выполнение действия по умолчанию
+    let formTitle = document.getElementById('formTitle');  //Получает поле ввода для названия задачи
+    let formDescription = document.getElementById('formDescription');  // Получает поле ввода для описания задачи.
+    task = {'title': formTitle.value, 'description': formDescription.value};  //Создает объект с данными задачи.
+    fetch('http://127.0.0.1:8000/api/v1/tasks/create', {  //ыполняет POST-запрос для создания задачи
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(task)  // Преобразует объект задачи в JSON.
+    })
+    formTitle.value = '';  // Очищает поле ввода для названия задачи.
+    formDescription.value = '';  // Очищает поле ввода для описания задачи.
+    getTask()  // Вызывает функцию для получения задач после создания новой задачи.
+})
+
+</script>
+
+{% endblock %}  <!-- Заканчивает блок контента для этой страницы. -->

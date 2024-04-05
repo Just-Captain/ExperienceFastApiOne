@@ -1,0 +1,19 @@
+<!DOCTYPE html>  <!-- Определяет тип документа как HTML5. -->
+<html lang="en">  <!-- Указывает, что язык документа - английский. -->
+<head>
+    <meta charset="UTF-8">  <!-- Указывает кодировку символов как UTF-8. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  <!-- Определяет метаданные для адаптивного макета. -->
+    <title>Jira</title>  <!-- Устанавливает заголовок документа. -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">  <!-- Подключает CSS-файл Bootstrap. -->
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">  <!-- Подключает пользовательский CSS-файл. -->
+</head>
+<body>
+    <h1>BASE HTML</h1>  <!-- Заголовок страницы. -->
+    {% block body %}  <!-- Блок контента, который будет заменен контентом другой страницы. -->
+    <!-- Контент другой странички -->
+    {% endblock %}  <!-- Конец блока контента. -->
+
+    <script src="{{ url_for('static', path='/script.js') }}"></script>  <!-- Подключает пользовательский JavaScript-файл. -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>  <!-- Подключает JavaScript-библиотеку Bootstrap. -->
+</body>
+</html>  <!-- Закрывает документ HTML. -->
